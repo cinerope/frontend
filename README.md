@@ -6,6 +6,8 @@
 * TypeScript
 * Tailwind CSS
 * React.js
+* React Flow (노드)
+* Zustand (상태관리)
 * ESLINT
 
 ## 프로젝트 생성
