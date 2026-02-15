@@ -1,47 +1,53 @@
-'use client'
+'use client';
 
 import React from 'react';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, type NodeProps } from 'reactflow';
 
-export default function PromptNode({ data }: { data: any }) {
-    return (
-        <div className="px-4 py-3 shadow-md rounded-xl bg-white border-2 border-black w-64">
-            <Handle
-                type="target"
-                position={Position.Left}
-                className="w-3 h-3 bg-gray-400 border-2 border-white"
-            />
+type AgentParam = {
+  key: string;
+  value: string;
+};
 
-            <div className="flex flex-col">
-                {/* 상단: AI 모델 정보 */}
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                    {data.aiModel || 'AI MODEL'}
-                  </span>
-                        <div className="w-2 h-2 rounded-full bg-green-500" />
-                        </div>
+type AgentNodeData = {
+  aiModelName?: string;
+  prompt?: string;
+  params?: AgentParam[];
+};
 
-                        {/* 중단: 프롬프트 텍스트 */}
-                        <p className="text-sm font-medium text-gray-800 line-clamp-3 mb-3">
-                            {data.prompt}
-                        </p>
+export default function PromptNode({ data }: NodeProps<AgentNodeData>) {
+  return (
+    <div className="w-72 rounded-2xl border border-[#50566f] bg-[#141929] p-4 shadow-[0_12px_28px_rgba(0,0,0,0.45)]">
+      <Handle
+        type="target"
+        position={Position.Left}
+        className="h-3 w-3 border-2 border-[#111522] bg-[#7f87ab]"
+      />
 
-                        {/* 하단: 파라미터 칩들 */}
-                        <div className="flex flex-wrap gap-1">
-                            {data.params?.map((param: string) => (
-                                <span key={param} className="px-2 py-0.5 bg-gray-100 rounded text-[9px] text-gray-500 border border-gray-200">
-                      {param}
-                    </span>
-                    ))}
-                </div>
-            </div>
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#8f98bc]">Agent</span>
+        <span className="rounded-full border border-[#49506a] bg-[#1c2236] px-2 py-0.5 text-[10px] text-[#d6dcf5]">
+          {data.aiModelName ?? 'Unknown'}
+        </span>
+      </div>
 
-            {/* 오른쪽 연결점 (출력) */}
-            <Handle
-                type="source"
-                position={Position.Right}
-                className="w-3 h-3 bg-black border-2 border-white"
-            />
-        </div>
-    );
+      <p className="mb-3 line-clamp-3 text-sm text-[#dfe5ff]">{data.prompt || '프롬프트가 없습니다.'}</p>
+
+      <div className="flex flex-wrap gap-1.5">
+        {data.params?.map((param) => (
+          <span
+            key={param.key}
+            className="rounded-md border border-[#3f455c] bg-[#1a2032] px-2 py-1 text-[10px] text-[#acb5d7]"
+          >
+            {param.key}: {param.value}
+          </span>
+        ))}
+      </div>
+
+      <Handle
+        type="source"
+        position={Position.Right}
+        className="h-3 w-3 border-2 border-[#111522] bg-[#98a3ce]"
+      />
+    </div>
+  );
 }

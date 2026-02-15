@@ -1,75 +1,97 @@
 import { create } from 'zustand';
 
 import {
-    Connection,
-    Edge,
-    EdgeChange,
-    Node,
-    NodeChange,
-    addEdge,
-    OnNodesChange,
-    OnEdgesChange,
-    OnConnect,
-    applyNodeChanges,
-    applyEdgeChanges,
+  Connection,
+  Edge,
+  EdgeChange,
+  Node,
+  NodeChange,
+  OnNodesChange,
+  OnEdgesChange,
+  OnConnect,
+  addEdge,
+  applyEdgeChanges,
+  applyNodeChanges,
 } from 'reactflow';
 
-/**
- *  저장소에서 관리할 상태들의 타입 정의
- */
+export type UiMode = 'none' | 'node-menu' | 'agent-form' | 'comment-place';
+
 type RFState = {
-    nodes: Node[];
-    edges: Edge[];
-    isPromptMode: boolean; // 프롬프트 입력 모드 여부
-    setPromptMode: (mode: boolean) => void; // 모드 변경 함수
-    addNode: (node: Node) => void;
-    onNodesChange: OnNodesChange;
-    onEdgesChange: OnEdgesChange;
-    onConnect: OnConnect;
-    setNodes: (nodes: Node[]) => void;
-    setEdges: (edges: Edge[]) => void;
+  nodes: Node[];
+  edges: Edge[];
+  uiMode: UiMode;
+  setUiMode: (mode: UiMode) => void;
+  addNode: (node: Node) => void;
+  updateNodeData: (id: string, patch: Record<string, unknown>) => void;
+  onNodesChange: OnNodesChange;
+  onEdgesChange: OnEdgesChange;
+  onConnect: OnConnect;
+  setNodes: (nodes: Node[]) => void;
+  setEdges: (edges: Edge[]) => void;
 };
 
-/**
- * Zustand Store 생성
- */
 const useStore = create<RFState>((set, get) => ({
-    nodes: [],
-    edges: [],
+  nodes: [],
+  edges: [],
+  uiMode: 'none',
 
-    isPromptMode: false, // 초기값은 일반 모드
-    setPromptMode: (mode) => set({ isPromptMode: mode }),
+  setUiMode: (mode) => set({ uiMode: mode }),
 
-    // 새로운 노드를 기존 배열 뒤에 추가
-    addNode: (node: Node) => {
-        set({
-            nodes: [...get().nodes, node],
-        });
-    },
+  addNode: (node) => {
+    set({
+      nodes: [...get().nodes, node],
+    });
+  },
 
-    // 노드 변경(이동, 삭제 등) 시 호출되는 함수
-    onNodesChange: (changes: NodeChange[]) => {
-        set({
-            nodes: applyNodeChanges(changes, get().nodes),
-        });
-    },
+  updateNodeData: (id, patch) => {
+    set({
+      nodes: get().nodes.map((node) => {
+        if (node.id !== id) {
+          return node;
+        }
 
-    // 와이어 변경 시 호출되는 함수
-    onEdgesChange: (changes: EdgeChange[]) => {
-        set({
-            edges: applyEdgeChanges(changes, get().edges),
-        });
-    },
+        return {
+          ...node,
+          data: {
+            ...(node.data ?? {}),
+            ...patch,
+          },
+        };
+      }),
+    });
+  },
 
-    // 노드와 노드를 연결했을 때 호출되는 함수
-    onConnect: (connection: Connection) => {
-        set({
-            edges: addEdge(connection, get().edges),
-        });
-    },
+  onNodesChange: (changes: NodeChange[]) => {
+    set({
+      nodes: applyNodeChanges(changes, get().nodes),
+    });
+  },
 
-    setNodes: (nodes: Node[]) => set({ nodes }),
-    setEdges: (edges: Edge[]) => set({ edges }),
+  onEdgesChange: (changes: EdgeChange[]) => {
+    set({
+      edges: applyEdgeChanges(changes, get().edges),
+    });
+  },
+
+  onConnect: (connection: Connection) => {
+    set({
+      edges: addEdge(
+        {
+          ...connection,
+          type: 'default',
+          style: {
+            stroke: '#6e7387',
+            strokeWidth: 2,
+            strokeDasharray: '6 5',
+          },
+        },
+        get().edges,
+      ),
+    });
+  },
+
+  setNodes: (nodes) => set({ nodes }),
+  setEdges: (edges) => set({ edges }),
 }));
 
 export default useStore;

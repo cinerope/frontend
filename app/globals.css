@@ -1,6 +1,68 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at 20% 10%, #1b2338 0%, #0a0d17 45%, #060810 100%);
+  color: #e8ecff;
+}
+
 .react-flow {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.react-flow__controls {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+
+.react-flow__controls-button {
+  background: #11172a;
+  border-bottom: 1px solid #2e3751;
+  color: #d7def8;
+}
+
+.react-flow__controls-button:hover {
+  background: #18213a;
+}
+
+.cinerope-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(145, 153, 182, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(145, 153, 182, 0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+}
+
+.cinerope-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #4a5575 #12192d;
+}
+
+.cinerope-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cinerope-scroll::-webkit-scrollbar-track {
+  background: #12192d;
+}
+
+.cinerope-scroll::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  border: 1px solid #2f3854;
+  background: #4a5575;
+}
+
+.cinerope-scroll::-webkit-scrollbar-thumb:hover {
+  background: #5d688f;
 }
